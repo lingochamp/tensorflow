@@ -5,10 +5,7 @@ licenses(["notice"])  # Apache 2.0
 
 exports_files(["LICENSE"])
 
-package(default_visibility = [
-    "//engedu/ml/tf_from_scratch:__pkg__",
-    "//tensorflow:internal",
-])
+package(default_visibility = ["//visibility:public"])
 
 load("//tensorflow:tensorflow.bzl", "py_test")
 
@@ -644,10 +641,7 @@ py_test(
         "manual",
         "notap",
     ],
-    visibility = [
-        "//learning/brain/google/guitar:__subpackages__",
-        "//tensorflow:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         ":learn",
         "//tensorflow/contrib/layers:layers_py",
@@ -691,10 +685,7 @@ py_test(
         "manual",
         "notap",
     ],
-    visibility = [
-        "//learning/brain/google/guitar:__subpackages__",
-        "//tensorflow:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         ":learn",
         "//tensorflow/contrib/layers:layers_py",
@@ -1129,5 +1120,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

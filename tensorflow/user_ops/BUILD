@@ -2,7 +2,7 @@
 # An example for custom op and kernel defined as a TensorFlow plugin.
 
 package(
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
 )
 
 licenses(["notice"])  # Apache 2.0
@@ -60,5 +60,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

@@ -1,7 +1,7 @@
 licenses(["notice"])  # Apache 2.0
 
 package(
-    default_visibility = ["//visibility:private"],
+    default_visibility = ["//visibility:public"],
 )
 
 load("//tensorflow/compiler/xla:xla.bzl", "xla_proto_library")
@@ -221,5 +221,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

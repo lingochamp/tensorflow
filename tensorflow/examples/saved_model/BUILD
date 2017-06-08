@@ -1,7 +1,7 @@
 # Description: SavedModel half plus two example.
 
 package(
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
     features = [
         "-layering_check",
     ],

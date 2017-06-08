@@ -2,7 +2,7 @@
 #   TensorFlow C++ inference example for labeling images.
 
 package(
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
     features = [
         "-layering_check",
         "-parse_headers",
@@ -57,5 +57,5 @@ filegroup(
             "gen/**",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

@@ -1,5 +1,5 @@
 package(
-    default_visibility = ["//tensorflow:__subpackages__"],
+    default_visibility = ["//visibility:public"],
     features = [
         "-layering_check",
         "-parse_headers",
@@ -372,5 +372,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

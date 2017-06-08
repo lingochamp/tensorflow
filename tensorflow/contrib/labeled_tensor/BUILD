@@ -5,7 +5,7 @@ licenses(["notice"])  # Apache 2.0
 
 exports_files(["LICENSE"])
 
-package(default_visibility = ["//tensorflow:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 load("//tensorflow:tensorflow.bzl", "py_test")
 
@@ -35,7 +35,7 @@ py_library(
     name = "_typecheck",
     srcs = ["python/ops/_typecheck.py"],
     srcs_version = "PY2AND3",
-    visibility = [":__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 py_library(

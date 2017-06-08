@@ -1,7 +1,7 @@
 # Description:
 # TensorBoard plugin for graphs
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -14,9 +14,7 @@ py_library(
     name = "graphs_plugin",
     srcs = ["graphs_plugin.py"],
     srcs_version = "PY2AND3",
-    visibility = [
-        "//tensorflow:internal",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow:tensorflow_py",
         "//tensorflow/tensorboard/backend:http_util",
@@ -47,5 +45,5 @@ py_test(
 filegroup(
     name = "all_files",
     srcs = glob(["**"]),
-    visibility = ["//tensorflow:__pkg__"],
+    visibility = ["//visibility:public"],
 )

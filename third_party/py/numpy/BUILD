@@ -17,5 +17,5 @@ genrule(
     name = "dummy",
     outs = ["tf_numpy_dummy.py"],
     cmd = "touch $@",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
 )

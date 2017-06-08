@@ -20,7 +20,7 @@ licenses(["notice"])  # Apache 2.0
 
 exports_files(["LICENSE"])
 
-package(default_visibility = ["//tensorflow:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 load("//tensorflow:tensorflow.bzl", "py_test")
 
@@ -45,7 +45,7 @@ py_test(
     size = "small",
     srcs = ["python/saved_model/reader_test.py"],
     srcs_version = "PY2AND3",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":saved_model_py",
         "//tensorflow/python:client_testlib",
@@ -82,5 +82,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

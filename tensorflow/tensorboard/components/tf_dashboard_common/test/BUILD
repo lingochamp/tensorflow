@@ -1,6 +1,6 @@
 package(
     default_testonly = True,
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
 )
 
 load("//tensorflow/tensorboard:web.bzl", "ts_web_library")

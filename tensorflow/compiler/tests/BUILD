@@ -15,7 +15,7 @@ package_group(
 )
 
 package(
-    default_visibility = [":internal"],
+    default_visibility = ["//visibility:public"],
 )
 
 load("//tensorflow:tensorflow.bzl", "tf_cuda_cc_test")
@@ -31,7 +31,7 @@ py_library(
     testonly = 1,
     srcs = ["xla_test.py"],
     srcs_version = "PY2AND3",
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/contrib/compiler:compiler_py",
         "//tensorflow/core:protos_all_py",
@@ -515,5 +515,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

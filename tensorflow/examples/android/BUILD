@@ -111,7 +111,7 @@ filegroup(
             "libs/**",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 filegroup(

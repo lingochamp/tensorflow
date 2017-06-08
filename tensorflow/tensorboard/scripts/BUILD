@@ -1,7 +1,7 @@
 # Description:
 # Some useful scripts that are bundled with TensorBoard.
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -28,5 +28,5 @@ py_binary(
 filegroup(
     name = "all_files",
     srcs = glob(["*"]),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

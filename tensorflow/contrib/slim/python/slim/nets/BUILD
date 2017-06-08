@@ -8,10 +8,7 @@ exports_files(["LICENSE"])
 load("//tensorflow:tensorflow.bzl", "py_test")
 
 package(
-    default_visibility = [
-        "//tensorflow:__subpackages__",
-        "//tensorflow_models:__subpackages__",
-    ],
+    default_visibility = ["//visibility:public"],
 )
 
 # Transitive dependencies of this target will be included in the pip package.
@@ -346,5 +343,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

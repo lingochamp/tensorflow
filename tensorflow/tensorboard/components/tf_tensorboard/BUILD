@@ -1,4 +1,4 @@
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 load("//tensorflow/tensorboard:web.bzl", "ts_web_library")
 load("//tensorflow/tensorboard:vulcanize.bzl", "tensorboard_html_binary")

@@ -49,7 +49,7 @@ filegroup(
             "gen/**",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 # JAR with Java bindings to TF.

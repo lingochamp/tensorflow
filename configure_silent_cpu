@@ -132,10 +132,12 @@ TF_NEED_GCP=0
 # Anything hadoop is worse than rubbish.
 TF_NEED_HDFS=0
 # Disable XLA (just-in-time compiler).
+# TODO(yi.sun): Investigate the effectiveness of this one.
 TF_ENABLE_XLA=0
 # Verbs allows the peers to exchange data through RDMA, typically faster.
-TF_NEED_VERBS=1
-write_to_bazelrc 'build --define with_verbs_support=true'
+# However, this requires RDMA pre-installed, which is too much trouble for now.
+# TODO(yi.sun): Investigating whether this is necessary.
+TF_NEED_VERBS=0
 
 # Append CC optimization flags to bazel.rc
 for opt in $CC_OPT_FLAGS; do
@@ -149,9 +151,9 @@ chmod a+x ${GEN_GIT_SOURCE}
 "${PYTHON_BIN_PATH}" ${GEN_GIT_SOURCE} --configure "${SOURCE_BASE_DIR}"
 
 # This configure file is for CPU only. There would be a GPU version later.
-export TF_NEED_CUDA=0
+TF_NEED_CUDA=0
 write_action_env_to_bazelrc "TF_NEED_CUDA" "$TF_NEED_CUDA"
-export TF_NEED_OPENCL=0
+TF_NEED_OPENCL=0
 write_action_env_to_bazelrc "TF_NEED_OPENCL" "$TF_NEED_OPENCL"
 
 # We definitely do not need rubbish such as MPI. We have GRPC.

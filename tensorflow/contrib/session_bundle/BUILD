@@ -129,7 +129,7 @@ py_test(
         "exporter_test.py",
     ],
     srcs_version = "PY2AND3",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":constants",
         ":exporter",
@@ -166,7 +166,7 @@ py_test(
         "gc_test.py",
     ],
     srcs_version = "PY2AND3",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":gc",
         "//tensorflow/python:client_testlib",
@@ -234,7 +234,7 @@ cc_test(
     data = [":session_bundle_half_plus_two"],
     # Link in all registered kernels.
     linkstatic = 1,
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":session_bundle",
         ":test_util",
@@ -327,7 +327,7 @@ cc_test(
     name = "signature_test",
     size = "small",
     srcs = ["signature_test.cc"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":manifest_proto_cc",
         ":signature",
@@ -349,7 +349,7 @@ cc_library(
     srcs = ["test_util.cc"],
     hdrs = ["test_util.h"],
     deprecation = "Use SavedModel instead.",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:lib",
         "//tensorflow/core:test",

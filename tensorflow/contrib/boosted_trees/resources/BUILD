@@ -3,10 +3,7 @@ licenses(["notice"])  # Apache 2.0
 exports_files(["LICENSE"])
 
 package(
-    default_visibility = [
-        "//tensorflow/contrib/boosted_trees:__subpackages__",
-        "//tensorflow/contrib/boosted_trees:friends",
-    ],
+    default_visibility = ["//visibility:public"],
 )
 
 filegroup(
@@ -17,7 +14,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(

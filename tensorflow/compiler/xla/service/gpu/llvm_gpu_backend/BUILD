@@ -1,7 +1,7 @@
 licenses(["notice"])  # Apache 2.0
 
 package(
-    default_visibility = [":friends"],
+    default_visibility = ["//visibility:public"],
     features = [
         "-parse_headers",
         "no_layering_check",
@@ -84,5 +84,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

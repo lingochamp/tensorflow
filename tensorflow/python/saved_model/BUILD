@@ -17,7 +17,7 @@ py_library(
     name = "saved_model",
     srcs = ["saved_model.py"],
     srcs_version = "PY2AND3",
-    visibility = ["//tensorflow:internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":builder",
         ":constants",
@@ -106,7 +106,7 @@ py_test(
     data = ["//tensorflow/cc/saved_model:saved_model_half_plus_two"],
     srcs_version = "PY2AND3",
     tags = ["no_windows"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":builder",
         ":constants",
@@ -148,7 +148,7 @@ py_test(
     size = "small",
     srcs = ["utils_test.py"],
     srcs_version = "PY2AND3",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":utils",
         "//tensorflow/python:array_ops",
@@ -176,7 +176,7 @@ py_test(
     size = "small",
     srcs = ["signature_def_utils_test.py"],
     srcs_version = "PY2AND3",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":signature_constants",
         ":signature_def_utils",
@@ -199,5 +199,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

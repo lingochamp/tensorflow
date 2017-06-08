@@ -1,9 +1,7 @@
 licenses(["notice"])  # Apache 2.0
 
 package(
-    default_visibility = [
-        "//tensorflow/compiler/tf2xla:internal",
-    ],
+    default_visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -49,7 +47,7 @@ cc_library(
 cc_library(
     name = "parallel_check_op",
     srcs = ["parallel_check_op.cc"],
-    visibility = ["//tensorflow/compiler/jit:friends"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/compiler/jit/legacy_flags:parallel_check_op_flags",
         "//tensorflow/core:core_cpu",
@@ -70,5 +68,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

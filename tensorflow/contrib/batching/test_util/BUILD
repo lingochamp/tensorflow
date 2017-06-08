@@ -1,7 +1,7 @@
 # Description: Utilities to aid testing.
 
 package(
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
     features = ["-layering_check"],
 )
 

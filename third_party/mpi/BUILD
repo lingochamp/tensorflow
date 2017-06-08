@@ -9,7 +9,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 load("//third_party/mpi:mpi.bzl", "mpi_hdr")

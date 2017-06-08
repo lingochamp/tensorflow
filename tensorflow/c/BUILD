@@ -23,7 +23,7 @@ load(
 filegroup(
     name = "headers",
     srcs = ["c_api.h"],
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 tf_cuda_library(
@@ -155,5 +155,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

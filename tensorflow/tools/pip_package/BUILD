@@ -1,7 +1,7 @@
 # Description:
 #  Tools for building the TensorFlow pip package.
 
-package(default_visibility = ["//visibility:private"])
+package(default_visibility = ["//visibility:public"])
 
 load(
     "//tensorflow:tensorflow.bzl",

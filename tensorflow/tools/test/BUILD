@@ -1,7 +1,7 @@
 # Description:
 # Tools for testing
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 load(
     "//tensorflow/tools/test:performance.bzl",
@@ -98,7 +98,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 py_test(

@@ -233,5 +233,5 @@ filegroup(
             "gen/**",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

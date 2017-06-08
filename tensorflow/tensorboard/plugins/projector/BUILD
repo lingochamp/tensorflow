@@ -1,6 +1,6 @@
 # Embedding Projector plugin.
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -13,7 +13,7 @@ py_library(
     name = "projector_plugin",
     srcs = ["projector_plugin.py"],
     srcs_version = "PY2AND3",
-    visibility = ["//tensorflow:internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":protos_all_py",
         "//tensorflow:tensorflow_py",
@@ -49,5 +49,5 @@ tf_proto_library(
 filegroup(
     name = "all_files",
     srcs = glob(["**"]),
-    visibility = ["//tensorflow:__pkg__"],
+    visibility = ["//visibility:public"],
 )

@@ -1,8 +1,5 @@
 package(
-    default_visibility = [
-        "//engedu/ml/tf_from_scratch:__pkg__",
-        "//tensorflow:internal",
-    ],
+    default_visibility = ["//visibility:public"],
     features = [
         "-layering_check",
         "-parse_headers",
@@ -57,5 +54,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

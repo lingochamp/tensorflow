@@ -1,6 +1,6 @@
 licenses(["notice"])  # Apache 2.0
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 load(
     "//tensorflow:tensorflow.bzl",
@@ -79,5 +79,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

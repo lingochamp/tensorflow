@@ -391,7 +391,7 @@ cc_library(
     name = "training_op_helpers",
     srcs = ["training_op_helpers.cc"],
     hdrs = ["training_op_helpers.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":variable_ops",
         "//tensorflow/core:framework",
@@ -403,7 +403,7 @@ cc_library(
 cc_library(
     name = "bounds_check",
     hdrs = ["bounds_check.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:framework_lite",
         "//third_party/eigen3",
@@ -432,7 +432,7 @@ cc_library(
         "cuda_device_array.h",
         "cuda_device_array_gpu.h",
     ],
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:lib",
     ],
@@ -459,7 +459,7 @@ cc_library(
 cc_library(
     name = "image_resizer_state",
     hdrs = ["image_resizer_state.h"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:lib",
         "//third_party/eigen3",
@@ -993,7 +993,7 @@ tf_cc_test(
 tf_kernel_library(
     name = "gather_functor",
     prefix = "gather_functor",
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":bounds_check",
         "//tensorflow/core:framework_lite",
@@ -1135,7 +1135,7 @@ tf_cc_test(
 tf_kernel_library(
     name = "scatter_functor",
     prefix = "scatter_functor",
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":bounds_check",
         "//tensorflow/core:framework",
@@ -1211,7 +1211,7 @@ tf_kernel_library(
         "transpose_functor_gpu.cu.cc",
         "transpose_functor.h",
     ],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:framework",
         "//tensorflow/core/kernels:conv_ops",
@@ -1248,7 +1248,7 @@ cc_library(
     name = "range_sampler",
     srcs = ["range_sampler.cc"],
     hdrs = ["range_sampler.h"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_internal",
@@ -1511,7 +1511,7 @@ cc_library(
     name = "fifo_queue",
     srcs = ["fifo_queue.cc"],
     hdrs = ["fifo_queue.h"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":queue_base",
         ":typed_queue",
@@ -1524,7 +1524,7 @@ cc_library(
     name = "padding_fifo_queue",
     srcs = ["padding_fifo_queue.cc"],
     hdrs = ["padding_fifo_queue.h"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":fifo_queue",
         ":queue_base",
@@ -1579,7 +1579,7 @@ tf_kernel_library(
     name = "tensor_array",
     srcs = ["tensor_array.cc"],
     hdrs = ["tensor_array.h"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":aggregate_ops",
         "//tensorflow/core:framework",
@@ -2066,7 +2066,7 @@ tf_kernel_library(
         "//tensorflow:darwin": [],
         "//conditions:default": ["-Wl,-z,muldefs"],
     }),
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
@@ -2161,7 +2161,7 @@ cc_library(
     name = "linalg_ops_common",
     srcs = ["linalg_ops_common.cc"],
     hdrs = ["linalg_ops_common.h"],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
@@ -2999,7 +2999,7 @@ tf_kernel_library(
         "spacetobatch_functor.h",
         "spacetobatch_functor_gpu.cu.cc",
     ],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":bounds_check",
         "//tensorflow/core:framework",
@@ -3040,7 +3040,7 @@ tf_kernel_library(
         "spacetodepth_op.h",
         "spacetodepth_op_gpu.cu.cc",
     ],
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:framework",
         "//tensorflow/core:lib",
@@ -5475,5 +5475,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

@@ -2,7 +2,7 @@
 # Cloud file system implementation.
 
 package(
-    default_visibility = ["//visibility:private"],
+    default_visibility = ["//visibility:public"],
 )
 
 licenses(["notice"])  # Apache 2.0
@@ -21,7 +21,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -51,7 +51,7 @@ cc_library(
     name = "http_request",
     srcs = ["http_request.cc"],
     hdrs = ["http_request.h"],
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:framework_headers_lib",
         "//tensorflow/core:lib_internal",
@@ -65,7 +65,7 @@ cc_library(
     hdrs = [
         "http_request_fake.h",
     ],
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":http_request",
         "//tensorflow/core:lib",
@@ -84,7 +84,7 @@ cc_library(
         "auth_provider.h",
         "google_auth_provider.h",
     ],
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
     deps = [
         ":http_request",
         ":oauth_client",

@@ -14,7 +14,7 @@
 
 licenses(["notice"])  # Apache 2.0
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "encapsulate_subgraphs_pass_flags",
@@ -63,5 +63,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

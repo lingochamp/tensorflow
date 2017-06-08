@@ -8,7 +8,7 @@
 # Note that proto3 well-known types (e.g. Any) are not handled in a special way
 # by the generated code.
 
-package(default_visibility = ["//visibility:private"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -31,7 +31,7 @@ load(
 cc_binary(
     name = "gen_proto_text_functions",
     srcs = ["gen_proto_text_functions.cc"],
-    visibility = ["//tensorflow:internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":gen_proto_text_functions_lib",
         "//tensorflow/core:lib_proto_parsing",
@@ -103,5 +103,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

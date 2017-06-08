@@ -15,7 +15,7 @@ package_group(
 )
 
 package(
-    default_visibility = [":internal"],
+    default_visibility = ["//visibility:public"],
 )
 
 load("//tensorflow:tensorflow.bzl", "cc_header_only_library")
@@ -39,7 +39,7 @@ cc_header_only_library(
 # Target that bundles up the XLA CPU and GPU JIT devices.
 cc_library(
     name = "jit",
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":xla_cpu_device",
         ":xla_cpu_jit",
@@ -52,7 +52,7 @@ cc_library(
 
 cc_library(
     name = "xla_cpu_jit",
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":jit_compilation_passes",
         "//tensorflow/compiler/jit/kernels:xla_local_launch_op",
@@ -64,7 +64,7 @@ cc_library(
 
 cc_library(
     name = "xla_gpu_jit",
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = if_cuda([
         ":jit_compilation_passes",
         "//tensorflow/compiler/jit/kernels:xla_local_launch_op",
@@ -77,7 +77,7 @@ cc_library(
 cc_library(
     name = "xla_cpu_device",
     srcs = ["xla_cpu_device.cc"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":jit_compilation_passes",
         ":xla_device",
@@ -94,7 +94,7 @@ cc_library(
 cc_library(
     name = "xla_gpu_device",
     srcs = ["xla_gpu_device.cc"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":jit_compilation_passes",
         ":xla_device",
@@ -118,7 +118,7 @@ cc_library(
     hdrs = [
         "defs.h",
     ],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -281,5 +281,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

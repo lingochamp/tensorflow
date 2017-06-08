@@ -9,7 +9,7 @@
 #    core/common_runtime/debugger_state_interface.h.
 
 package(
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
     features = ["-parse_headers"],
 )
 
@@ -271,5 +271,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

@@ -2,7 +2,7 @@
 
 licenses(["notice"])  # Apache 2.0
 
-package(default_visibility = ["//tensorflow/compiler/xla/client:friends"])
+package(default_visibility = ["//visibility:public"])
 
 # Filegroup used to collect source files for dependency checking.
 filegroup(
@@ -57,5 +57,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

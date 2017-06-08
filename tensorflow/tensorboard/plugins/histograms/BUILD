@@ -1,7 +1,7 @@
 # Description:
 # TensorBoard plugin for histograms
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -14,9 +14,7 @@ py_library(
     name = "histograms_plugin",
     srcs = ["histograms_plugin.py"],
     srcs_version = "PY2AND3",
-    visibility = [
-        "//tensorflow:internal",
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/tensorboard/backend:http_util",
         "//tensorflow/tensorboard/backend/event_processing:event_accumulator",
@@ -46,5 +44,5 @@ py_test(
 filegroup(
     name = "all_files",
     srcs = glob(["**"]),
-    visibility = ["//tensorflow:__pkg__"],
+    visibility = ["//visibility:public"],
 )

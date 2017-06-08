@@ -27,5 +27,5 @@ tf_py_logged_benchmark(
 filegroup(
     name = "all_files",
     srcs = glob(["**/*"]),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

@@ -2,7 +2,7 @@
 #   A Cudnn RNN wrapper.
 #   APIs are meant to change over time.
 package(
-    default_visibility = ["//visibility:private"],
+    default_visibility = ["//visibility:public"],
     features = ["-parse_headers"],
 )
 
@@ -159,5 +159,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

@@ -1,7 +1,7 @@
 # TensorFlow API backwards compatibility tests.
 
 package(
-    default_visibility = ["//tensorflow/tools/api:__subpackages__"],
+    default_visibility = ["//visibility:public"],
 )
 
 licenses(["notice"])  # Apache 2.0
@@ -39,5 +39,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

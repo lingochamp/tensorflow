@@ -1,7 +1,7 @@
 # Tests of TensorFlow kernels written using the Python API.
 
 package(
-    default_visibility = ["//tensorflow:internal"],
+    default_visibility = ["//visibility:public"],
     features = [
         "-layering_check",
         "-parse_headers",
@@ -275,5 +275,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

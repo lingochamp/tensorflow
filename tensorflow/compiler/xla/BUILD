@@ -1,6 +1,6 @@
 licenses(["notice"])  # Apache 2.0
 
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 package_group(
     name = "friends",
@@ -66,7 +66,7 @@ cc_library(
     name = "test",
     testonly = 1,
     hdrs = ["test.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:lib_internal",
         "//tensorflow/core:test",
@@ -76,7 +76,7 @@ cc_library(
 cc_library(
     name = "types",
     hdrs = ["types.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:lib",
         "//third_party/eigen3",
@@ -87,7 +87,7 @@ cc_library(
     name = "service_interface",
     srcs = [],
     hdrs = ["service_interface.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":xla_proto",
         "//tensorflow/core:lib",
@@ -98,7 +98,7 @@ cc_library(
     name = "status_macros",
     srcs = ["status_macros.cc"],
     hdrs = ["status_macros.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":statusor",
         ":types",
@@ -348,7 +348,7 @@ cc_test(
 cc_library(
     name = "array3d",
     hdrs = ["array3d.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":types",
         "//tensorflow/core:lib",
@@ -369,7 +369,7 @@ cc_test(
 cc_library(
     name = "array4d",
     hdrs = ["array4d.h"],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":array2d",
         ":types",
@@ -399,7 +399,7 @@ cc_library(
     name = "packed_literal_reader",
     srcs = ["packed_literal_reader.cc"],
     hdrs = ["packed_literal_reader.h"],
-    visibility = [":internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":literal_util",
         ":shape_util",
@@ -416,7 +416,7 @@ cc_library(
     name = "test_helpers",
     testonly = 1,
     hdrs = ["test_helpers.h"],
-    visibility = [":internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":statusor",
         ":types",
@@ -430,7 +430,7 @@ cc_library(
     name = "text_literal_reader",
     srcs = ["text_literal_reader.cc"],
     hdrs = ["text_literal_reader.h"],
-    visibility = [":internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":literal_util",
         ":shape_util",
@@ -463,7 +463,7 @@ cc_library(
     name = "text_literal_writer",
     srcs = ["text_literal_writer.cc"],
     hdrs = ["text_literal_writer.h"],
-    visibility = [":internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":literal_util",
         ":shape_util",
@@ -586,5 +586,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

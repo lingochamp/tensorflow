@@ -16,7 +16,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 filegroup(
@@ -41,9 +41,7 @@ load(
     "tf_cuda_tests_tags",
 )
 
-package(default_visibility = [
-    "//tensorflow:internal",
-])
+package(default_visibility = ["//visibility:public"])
 
 cc_library(
     name = "partial_run_mgr",

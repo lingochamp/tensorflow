@@ -1,4 +1,4 @@
-package(default_visibility = ["//tensorflow:internal"])
+package(default_visibility = ["//visibility:public"])
 
 load("//tensorflow/tensorboard:hacks.bzl", "tensorboard_typescript_bundle")
 load("//tensorflow/tensorboard:web.bzl", "ts_web_library")
@@ -113,7 +113,7 @@ ts_web_library(
     ],
     path = "/tf-imports",
     strip_prefix = "package",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
 )
 
 ts_web_library(
@@ -132,7 +132,7 @@ ts_web_library(
     testonly = 1,
     srcs = ["@org_definitelytyped//:chai.d.ts"],
     path = "/chai",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
 )
 
 ts_web_library(
@@ -140,7 +140,7 @@ ts_web_library(
     testonly = 1,
     srcs = ["@org_definitelytyped//:mocha.d.ts"],
     path = "/mocha",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
 )
 
 ts_web_library(
@@ -148,7 +148,7 @@ ts_web_library(
     testonly = 1,
     srcs = ["@org_definitelytyped//:sinon.d.ts"],
     path = "/sinonjs",
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
 )
 
 # Generate single TypeScript typings file for d3.js with no ES6 imports.

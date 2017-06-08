@@ -53,10 +53,7 @@
 #   supporting SELECTIVE_REGISTRATION feature.
 # portable_proto_library ":android_proto_lib" (Google-internal)
 
-package(default_visibility = [
-    "//tensorflow:internal",
-    "//tensorflow_models:__subpackages__",
-])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -545,7 +542,7 @@ cc_library(
     srcs = ["ops/debug_ops.cc"],
     copts = tf_copts(),
     linkstatic = 1,
-    visibility = ["//tensorflow:internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":framework",
         "//tensorflow/core/kernels:debug_ops",
@@ -568,7 +565,7 @@ cc_library(
     name = "word2vec_ops",
     srcs = ["ops/word2vec_ops.cc"],
     linkstatic = 1,
-    visibility = ["//tensorflow:internal"],
+    visibility = ["//visibility:public"],
     deps = ["//tensorflow/core:framework"],
     alwayslink = 1,
 )
@@ -1167,9 +1164,7 @@ tf_proto_library_cc(
     srcs = ["protobuf/worker.proto"],
     cc_api_version = 2,
     protodeps = [":protos_all"],
-    visibility = [
-        "//tensorflow:internal",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library_cc(
@@ -1179,9 +1174,7 @@ tf_proto_library_cc(
     cc_api_version = 2,
     cc_stubby_versions = ["2"],
     protodeps = [":worker_proto"],
-    visibility = [
-        "//tensorflow:internal",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library_cc(
@@ -1189,9 +1182,7 @@ tf_proto_library_cc(
     srcs = ["protobuf/master.proto"],
     cc_api_version = 2,
     protodeps = [":protos_all"],
-    visibility = [
-        "//tensorflow:internal",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_proto_library_cc(
@@ -1201,9 +1192,7 @@ tf_proto_library_cc(
     cc_api_version = 2,
     cc_stubby_versions = ["2"],
     protodeps = [":master_proto"],
-    visibility = [
-        "//tensorflow:internal",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -1695,10 +1684,7 @@ cc_library(
     hdrs = [
         "platform/regexp.h",
     ],
-    visibility = [
-        "//tensorflow/compiler:__subpackages__",
-        "//tensorflow/tools/tfprof:__subpackages__",
-    ],
+    visibility = ["//visibility:public"],
     deps = [":lib_internal"],
 )
 
@@ -1904,7 +1890,7 @@ cc_library(
     srcs = ["platform/test_main.cc"],
     copts = tf_copts(),
     linkopts = ["-lm"],
-    visibility = ["//tensorflow:internal"],
+    visibility = ["//visibility:public"],
     deps = [
         ":lib",
         ":lib_internal",
@@ -2930,7 +2916,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 alias(

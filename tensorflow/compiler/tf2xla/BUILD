@@ -17,7 +17,7 @@ package_group(
 )
 
 package(
-    default_visibility = [":internal"],
+    default_visibility = ["//visibility:public"],
 )
 
 cc_library(
@@ -38,7 +38,7 @@ cc_library(
         "xla_op_kernel.h",
         "xla_op_registry.h",
     ],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         ":common",
         ":dump_graph",
@@ -76,7 +76,7 @@ cc_library(
         "str_util.h",
         "type_util.h",
     ],
-    visibility = [":friends"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/compiler/xla:literal_util",
         "//tensorflow/compiler/xla:shape_util",
@@ -211,5 +211,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

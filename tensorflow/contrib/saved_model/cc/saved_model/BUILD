@@ -16,7 +16,7 @@
 # Description:
 # SavedModel contrib libraries for C++.
 
-package(default_visibility = ["//tensorflow:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -51,5 +51,5 @@ cc_test(
 filegroup(
     name = "all_files",
     srcs = glob(["*"]),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

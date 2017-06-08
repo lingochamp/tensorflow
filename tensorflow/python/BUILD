@@ -2,11 +2,7 @@
 # Python support for TensorFlow.
 
 package(
-    default_visibility = [
-        "//engedu/ml/tf_from_scratch:__pkg__",
-        "//tensorflow:internal",
-        "//tensorflow_models:__subpackages__",
-    ],
+    default_visibility = ["//visibility:public"],
 )
 
 licenses(["notice"])  # Apache 2.0
@@ -34,16 +30,7 @@ py_library(
     name = "python",
     srcs = ["__init__.py"],
     srcs_version = "PY2AND3",
-    visibility = [
-        "//tensorflow:__pkg__",
-        "//tensorflow/compiler/aot/tests:__pkg__",  # TODO(b/34059704): remove when fixed
-        "//tensorflow/contrib/learn:__pkg__",  # TODO(b/34059704): remove when fixed
-        "//tensorflow/contrib/learn/python/learn/datasets:__pkg__",  # TODO(b/34059704): remove when fixed
-        "//tensorflow/python/debug:__pkg__",  # TODO(b/34059704): remove when fixed
-        "//tensorflow/python/tools:__pkg__",  # TODO(b/34059704): remove when fixed
-        "//tensorflow/tensorboard/scripts:__pkg__",  # TODO(b/34059704): remove when fixed
-        "//tensorflow/tools/quantization:__pkg__",  # TODO(b/34059704): remove when fixed
-    ],
+    visibility = ["//visibility:public"],
     deps = [
         ":tf_optimizer",
         ":array_ops",
@@ -719,7 +706,7 @@ py_test(
 
 tf_gen_op_wrapper_private_py(
     name = "functional_ops_gen",
-    visibility = ["//learning/brain/python/ops:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 py_library(
@@ -1038,24 +1025,19 @@ py_test(
 tf_gen_op_wrapper_private_py(
     name = "array_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/compiler/tests:__pkg__",
-        "//tensorflow/contrib/quantization:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "candidate_sampling_ops_gen",
     require_shape_functions = True,
-    visibility = ["//learning/brain/python/ops:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "control_flow_ops_gen",
     require_shape_functions = True,
-    visibility = ["//learning/brain/python/ops:__pkg__"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/core:control_flow_ops_op_lib",
         "//tensorflow/core:no_op_op_lib",
@@ -1070,98 +1052,67 @@ tf_gen_op_wrapper_private_py(
 tf_gen_op_wrapper_private_py(
     name = "data_flow_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "dataset_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow:__subpackages__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "image_ops_gen",
     require_shape_functions = True,
-    visibility = ["//learning/brain/python/ops:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "io_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "linalg_ops_gen",
     require_shape_functions = True,
-    visibility = ["//learning/brain/python/ops:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "logging_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "lookup_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/contrib/lookup:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "math_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/google/python/ops:__pkg__",
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/compiler/tests:__pkg__",
-        "//tensorflow/contrib/quantization:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "nn_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/compiler/tests:__pkg__",
-        "//tensorflow/contrib/quantization:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-        "//tensorflow/python/tools:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "parsing_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
     name = "random_ops_gen",
     require_shape_functions = True,
-    visibility = ["//learning/brain/python/ops:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
@@ -1177,7 +1128,7 @@ tf_gen_op_wrapper_private_py(
 tf_gen_op_wrapper_private_py(
     name = "sdca_ops_gen",
     require_shape_functions = True,
-    visibility = ["//tensorflow/contrib/linear_optimizer:__pkg__"],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
@@ -1188,11 +1139,7 @@ tf_gen_op_wrapper_private_py(
 tf_gen_op_wrapper_private_py(
     name = "state_ops_gen",
     require_shape_functions = True,
-    visibility = [
-        "//learning/brain/python/ops:__pkg__",
-        "//tensorflow/contrib/framework:__pkg__",
-        "//tensorflow/python/kernel_tests:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 tf_gen_op_wrapper_private_py(
@@ -3630,7 +3577,7 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
 
 cuda_py_test(

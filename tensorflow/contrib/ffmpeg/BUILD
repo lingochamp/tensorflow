@@ -5,7 +5,7 @@ licenses(["notice"])  # Apache 2.0
 
 exports_files(["LICENSE"])
 
-package(default_visibility = ["//tensorflow:__subpackages__"])
+package(default_visibility = ["//visibility:public"])
 
 load("//tensorflow:tensorflow.bzl", "tf_gen_op_wrapper_py")
 load("//tensorflow:tensorflow.bzl", "tf_copts")
@@ -24,7 +24,7 @@ cc_library(
     srcs = ["decode_audio_op.cc"],
     copts = tf_copts(),
     linkstatic = 1,
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/contrib/ffmpeg/default:ffmpeg_lib",
         "//tensorflow/core:framework_headers_lib",
@@ -38,7 +38,7 @@ cc_library(
     srcs = ["encode_audio_op.cc"],
     copts = tf_copts(),
     linkstatic = 1,
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         "//tensorflow/contrib/ffmpeg/default:ffmpeg_lib",
         "//tensorflow/core:framework_headers_lib",
@@ -66,7 +66,7 @@ cc_library(
 tf_gen_op_wrapper_py(
     name = "decode_audio_op_py",
     require_shape_functions = True,
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":decode_audio_op_cc",
     ],
@@ -75,7 +75,7 @@ tf_gen_op_wrapper_py(
 tf_gen_op_wrapper_py(
     name = "encode_audio_op_py",
     require_shape_functions = True,
-    visibility = ["//visibility:private"],
+    visibility = ["//visibility:public"],
     deps = [
         ":encode_audio_op_cc",
     ],
@@ -138,5 +138,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )

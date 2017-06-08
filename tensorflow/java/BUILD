@@ -1,7 +1,7 @@
 # Description:
 # TensorFlow Java API.
 
-package(default_visibility = ["//visibility:private"])
+package(default_visibility = ["//visibility:public"])
 
 licenses(["notice"])  # Apache 2.0
 
@@ -20,10 +20,7 @@ java_library(
 filegroup(
     name = "java_sources",
     srcs = glob(["src/main/java/org/tensorflow/*.java"]),
-    visibility = [
-        "//tensorflow/contrib/android:__pkg__",
-        "//tensorflow/java:__pkg__",
-    ],
+    visibility = ["//visibility:public"],
 )
 
 java_library(
@@ -213,5 +210,5 @@ filegroup(
             "**/OWNERS",
         ],
     ),
-    visibility = ["//tensorflow:__subpackages__"],
+    visibility = ["//visibility:public"],
 )
