@@ -489,7 +489,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         actual = "@com_github_grpc_grpc//:grpc_cpp_plugin",
     )
 
-  if not native.existing_rule("grpc_cpp_plugin"):
+  if not native.existing_rule("grpc_lib"):
     native.bind(
         name = "grpc_lib",
         actual = "@com_github_grpc_grpc//:grpc++_unsecure",
