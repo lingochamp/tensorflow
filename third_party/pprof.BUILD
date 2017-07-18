@@ -4,15 +4,15 @@ package(
 
 licenses(["notice"])  # MIT
 
-load("@patched_com_github_google_protobuf//:protobuf.bzl", "py_proto_library")
+load("@com_github_google_protobuf//:protobuf.bzl", "py_proto_library")
 
 exports_files(["pprof/LICENSE"])
 
 py_proto_library(
     name = "pprof_proto_py",
     srcs = ["proto/profile.proto"],
-    default_runtime = "@patched_com_github_google_protobuf//:protobuf_python",
-    protoc = "@patched_com_github_google_protobuf//:protoc",
+    default_runtime = "@com_github_google_protobuf//:protobuf_python",
+    protoc = "@com_github_google_protobuf//:protoc",
     srcs_version = "PY2AND3",
-    deps = ["@patched_com_github_google_protobuf//:protobuf_python"],
+    deps = ["@com_github_google_protobuf//:protobuf_python"],
 )
