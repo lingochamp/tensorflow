@@ -395,7 +395,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
     )
 
-  if not existing_rule("gmock_archive"):
+  if not native.existing_rule("gmock_archive"):
     native.new_http_archive(
         name = "gmock_archive",
         urls = [
@@ -407,13 +407,13 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         build_file = str(Label("//third_party:gmock.BUILD")),
     )
 
-  if not existing_rule("gtest"):
+  if not native.existing_rule("gtest"):
     native.bind(
         name = "gtest",
         actual = "@gmock_archive//:gtest",
     )
 
-  if not existing_rule("gtest_main"):
+  if not native.existing_rule("gtest_main"):
     native.bind(
         name = "gtest_main",
         actual = "@gmock_archive//:gtest_main",
