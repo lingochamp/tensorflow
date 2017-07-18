@@ -38,7 +38,7 @@ load(
 # Check that tensorflow/core:tensorflow does not depend on grpc.
 check_deps(
     name = "core_tensorflow_check_deps",
-    disallowed_deps = ["@grpc//:grpc++_unsecure"],
+    disallowed_deps = ["@com_github_grpc_grpc//:grpc++_unsecure"],
     deps = ["//tensorflow/core:tensorflow"],
 )
 
@@ -129,7 +129,7 @@ tf_cuda_library(
         "//tensorflow/core:lib_internal",
         "//tensorflow/core:proto_text",
         "//tensorflow/core:protos_all_cc",
-        "@grpc//:grpc++_unsecure",
+        "@com_github_grpc_grpc//:grpc++_unsecure",
     ],
     alwayslink = 1,
 )
@@ -148,7 +148,7 @@ tf_cuda_library(
         "//tensorflow/core:lib",
         "//tensorflow/core:lib_internal",
         "//tensorflow/core:protos_all_cc",
-        "@grpc//:grpc++_unsecure",
+        "@com_github_grpc_grpc//:grpc++_unsecure",
     ],
     alwayslink = 1,
 )

@@ -459,27 +459,30 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
       actual = "@patched_com_github_google_protobuf//:protoc_lib",
   )
 
-  native.new_http_archive(
-      name = "grpc",
-      urls = [
-          "http://mirror.bazel.build/github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
-          "https://github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
-      ],
-      strip_prefix = "grpc-8df769fd3a89fc6b59da7b775cb3293553ab0d22",
-      build_file = str(Label("//third_party:grpc.BUILD")),
-  )
+  if not native.existing_rule("com_github_grpc_grpc"):
+    native.new_http_archive(
+        name = "com_github_grpc_grpc",
+        urls = [
+            "http://mirror.bazel.build/github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
+            "https://github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
+        ],
+        strip_prefix = "grpc-8df769fd3a89fc6b59da7b775cb3293553ab0d22",
+        build_file = str(Label("//third_party:grpc.BUILD")),
+    )
 
-  # protobuf expects //external:grpc_cpp_plugin to point to grpc's
-  # C++ plugin code generator.
-  native.bind(
-      name = "grpc_cpp_plugin",
-      actual = "@grpc//:grpc_cpp_plugin",
-  )
+  if not native.existing_rule("grpc_cpp_plugin"):
+    # protobuf expects //external:grpc_cpp_plugin to point to grpc's
+    # C++ plugin code generator.
+    native.bind(
+        name = "grpc_cpp_plugin",
+        actual = "@com_github_grpc_grpc//:grpc_cpp_plugin",
+    )
 
-  native.bind(
-      name = "grpc_lib",
-      actual = "@grpc//:grpc++_unsecure",
-  )
+  if not native.existing_rule("grpc_cpp_plugin"):
+    native.bind(
+        name = "grpc_lib",
+        actual = "@com_github_grpc_grpc//:grpc++_unsecure",
+    )
 
   native.new_http_archive(
       name = "linenoise",
