@@ -118,7 +118,7 @@ filegroup(
         "@org_pocoo_werkzeug//:LICENSE",
         "@org_pythonhosted_markdown//:LICENSE.md",
         "@png_archive//:LICENSE",
-        "@protobuf//:LICENSE",
+        "@patched_com_github_google_protobuf//:LICENSE",
         "@six_archive//:LICENSE",
         "@snappy//:COPYING",
         "@zlib_archive//:zlib.h",
