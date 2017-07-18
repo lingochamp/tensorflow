@@ -278,16 +278,17 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
       build_file = str(Label("//third_party:gif.BUILD")),
   )
 
-  native.new_http_archive(
-      name = "six_archive",
-      urls = [
-          "http://mirror.bazel.build/pypi.python.org/packages/source/s/six/six-1.10.0.tar.gz",
-          "http://pypi.python.org/packages/source/s/six/six-1.10.0.tar.gz",
-      ],
-      sha256 = "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a",
-      strip_prefix = "six-1.10.0",
-      build_file = str(Label("//third_party:six.BUILD")),
-  )
+  if not native.existing_rule("six_archive"):
+    native.new_http_archive(
+        name = "six_archive",
+        urls = [
+            "http://mirror.bazel.build/pypi.python.org/packages/source/s/six/six-1.10.0.tar.gz",
+            "http://pypi.python.org/packages/source/s/six/six-1.10.0.tar.gz",
+        ],
+        sha256 = "105f8d68616f8248e24bf0e9372ef04d3cc10104f1980f54d57b2ce73a5ad56a",
+        strip_prefix = "six-1.10.0",
+        build_file = str(Label("//third_party:six.BUILD")),
+    )
 
   native.new_http_archive(
       name = "org_pythonhosted_markdown",
@@ -333,79 +334,101 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
       build_file = str(Label("//third_party:werkzeug.BUILD")),
   )
 
-  native.bind(
-      name = "six",
-      actual = "@six_archive//:six",
-  )
+  if not native.existing_rule("six"):
+    native.bind(
+        name = "six",
+        actual = "@six_archive//:six",
+    )
 
-  patched_http_archive(
-      name = "patched_com_github_google_protobuf",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-      ],
-      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
-      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
-      # TODO: remove patching when tensorflow stops linking same protos into
-      #       multiple shared libraries loaded in runtime by python.
-      #       This patch fixes a runtime crash when tensorflow is compiled
-      #       with clang -O2 on Linux (see https://github.com/tensorflow/tensorflow/issues/8394)
-      patch_file = str(Label("//third_party/protobuf:add_noinlines.patch")),
-  )
+  if not native.existing_rule("patched_com_github_google_protobuf"):
+    patched_http_archive(
+        name = "patched_com_github_google_protobuf",
+        urls = [
+            "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+            "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+        ],
+        sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
+        strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+        # TODO: remove patching when tensorflow stops linking same protos into
+        #       multiple shared libraries loaded in runtime by python.
+        #       This patch fixes a runtime crash when tensorflow is compiled
+        #       with clang -O2 on Linux (see https://github.com/tensorflow/tensorflow/issues/8394)
+        patch_file = str(Label("//third_party/protobuf:add_noinlines.patch")),
+    )
 
-  # We need to import the protobuf library under the names com_google_protobuf
-  # and com_google_protobuf_cc to enable proto_library support in bazel.
-  # Unfortunately there is no way to alias http_archives at the moment.
-  native.http_archive(
-      name = "com_google_protobuf",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-      ],
-      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
-      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
-  )
+  if not native.existing_rule("protobuf_clib"):
+    # grpc expects //external:protobuf_clib and //external:protobuf_compiler
+    # to point to the protobuf's compiler library.
+    native.bind(
+        name = "protobuf_clib",
+        actual = "@patched_com_github_google_protobuf//:protoc_lib",
+    )
 
-  native.http_archive(
-      name = "com_google_protobuf_cc",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-          "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
-      ],
-      sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
-      strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
-  )
+  if not native.existing_rule("protobuf_compiler"):
+    native.bind(
+        name = "protobuf_compiler",
+        actual = "@patched_com_github_google_protobuf//:protoc_lib",
+    )
 
-  native.new_http_archive(
-      name = "gmock_archive",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/googletest/archive/release-1.8.0.zip",
-          "https://github.com/google/googletest/archive/release-1.8.0.zip",
-      ],
-      sha256 = "f3ed3b58511efd272eb074a3a6d6fb79d7c2e6a0e374323d1e6bcbcc1ef141bf",
-      strip_prefix = "googletest-release-1.8.0",
-      build_file = str(Label("//third_party:gmock.BUILD")),
-  )
+  if not native.existing_rule("com_google_protobuf"):
+    # We need to import the protobuf library under the names com_google_protobuf
+    # and com_google_protobuf_cc to enable proto_library support in bazel.
+    # Unfortunately there is no way to alias http_archives at the moment.
+    native.http_archive(
+        name = "com_google_protobuf",
+        urls = [
+            "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+            "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+        ],
+        sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
+        strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+    )
 
-  native.bind(
-      name = "gtest",
-      actual = "@gmock_archive//:gtest",
-  )
+  if not native.existing_rule("com_google_protobuf_cc"):
+    native.http_archive(
+        name = "com_google_protobuf_cc",
+        urls = [
+            "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+            "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
+        ],
+        sha256 = "e5d3d4e227a0f7afb8745df049bbd4d55474b158ca5aaa2a0e31099af24be1d0",
+        strip_prefix = "protobuf-2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a",
+    )
 
-  native.bind(
-      name = "gtest_main",
-      actual = "@gmock_archive//:gtest_main",
-  )
+  if not existing_rule("gmock_archive"):
+    native.new_http_archive(
+        name = "gmock_archive",
+        urls = [
+            "http://mirror.bazel.build/github.com/google/googletest/archive/release-1.8.0.zip",
+            "https://github.com/google/googletest/archive/release-1.8.0.zip",
+        ],
+        sha256 = "f3ed3b58511efd272eb074a3a6d6fb79d7c2e6a0e374323d1e6bcbcc1ef141bf",
+        strip_prefix = "googletest-release-1.8.0",
+        build_file = str(Label("//third_party:gmock.BUILD")),
+    )
 
-  native.http_archive(
-      name = "com_github_gflags_gflags",
-      urls = [
-          "http://mirror.bazel.build/github.com/gflags/gflags/archive/f8a0efe03aa69b3336d8e228b37d4ccb17324b88.tar.gz",
-          "https://github.com/gflags/gflags/archive/f8a0efe03aa69b3336d8e228b37d4ccb17324b88.tar.gz",
-      ],
-      sha256 = "4d222fab8f1ede4709cdff417d15a1336f862d7334a81abf76d09c15ecf9acd1",
-      strip_prefix = "gflags-f8a0efe03aa69b3336d8e228b37d4ccb17324b88",
-  )
+  if not existing_rule("gtest"):
+    native.bind(
+        name = "gtest",
+        actual = "@gmock_archive//:gtest",
+    )
+
+  if not existing_rule("gtest_main"):
+    native.bind(
+        name = "gtest_main",
+        actual = "@gmock_archive//:gtest_main",
+    )
+
+  if not native.existing_rule("com_github_gflags_gflags"):
+    native.http_archive(
+        name = "com_github_gflags_gflags",
+        urls = [
+            "http://mirror.bazel.build/github.com/gflags/gflags/archive/f8a0efe03aa69b3336d8e228b37d4ccb17324b88.tar.gz",
+            "https://github.com/gflags/gflags/archive/f8a0efe03aa69b3336d8e228b37d4ccb17324b88.tar.gz",
+        ],
+        sha256 = "4d222fab8f1ede4709cdff417d15a1336f862d7334a81abf76d09c15ecf9acd1",
+        strip_prefix = "gflags-f8a0efe03aa69b3336d8e228b37d4ccb17324b88",
+    )
 
   native.bind(
       name = "python_headers",
@@ -445,18 +468,6 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
       strip_prefix = "curl-7.49.1",
       build_file = str(Label("//third_party:curl.BUILD")),
       repository = tf_repo_name
-  )
-
-  # grpc expects //external:protobuf_clib and //external:protobuf_compiler
-  # to point to the protobuf's compiler library.
-  native.bind(
-      name = "protobuf_clib",
-      actual = "@patched_com_github_google_protobuf//:protoc_lib",
-  )
-
-  native.bind(
-      name = "protobuf_compiler",
-      actual = "@patched_com_github_google_protobuf//:protoc_lib",
   )
 
   if not native.existing_rule("com_github_grpc_grpc"):
@@ -536,47 +547,52 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
       actual = "@jsoncpp_git//:jsoncpp",
   )
 
-  native.http_archive(
-      name = "boringssl",
-      urls = [
-          "http://mirror.bazel.build/github.com/google/boringssl/archive/bbcaa15b0647816b9a1a9b9e0d209cd6712f0105.tar.gz",
-          "https://github.com/google/boringssl/archive/bbcaa15b0647816b9a1a9b9e0d209cd6712f0105.tar.gz",  # 2016-07-11
-      ],
-      sha256 = "025264d6e9a7ad371f2f66d17a28b6627de0c9592dc2eb54afd062f68f1f9aa3",
-      strip_prefix = "boringssl-bbcaa15b0647816b9a1a9b9e0d209cd6712f0105",
-  )
+  if not native.existing_rule("boringssl"):
+    native.http_archive(
+        name = "boringssl",
+        urls = [
+            "http://mirror.bazel.build/github.com/google/boringssl/archive/bbcaa15b0647816b9a1a9b9e0d209cd6712f0105.tar.gz",
+            "https://github.com/google/boringssl/archive/bbcaa15b0647816b9a1a9b9e0d209cd6712f0105.tar.gz",  # 2016-07-11
+        ],
+        sha256 = "025264d6e9a7ad371f2f66d17a28b6627de0c9592dc2eb54afd062f68f1f9aa3",
+        strip_prefix = "boringssl-bbcaa15b0647816b9a1a9b9e0d209cd6712f0105",
+    )
 
-  native.new_http_archive(
-      name = "nanopb_git",
-      urls = [
-          "http://mirror.bazel.build/github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
-          "https://github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
-      ],
-      sha256 = "ab1455c8edff855f4f55b68480991559e51c11e7dab060bbab7cffb12dd3af33",
-      strip_prefix = "nanopb-1251fa1065afc0d62f635e0f63fec8276e14e13c",
-      build_file = str(Label("//third_party:nanopb.BUILD")),
-  )
+  if not native.existing_rule("nanopb_git"):
+    native.new_http_archive(
+        name = "nanopb_git",
+        urls = [
+            "http://mirror.bazel.build/github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
+            "https://github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
+        ],
+        sha256 = "ab1455c8edff855f4f55b68480991559e51c11e7dab060bbab7cffb12dd3af33",
+        strip_prefix = "nanopb-1251fa1065afc0d62f635e0f63fec8276e14e13c",
+        build_file = str(Label("//third_party:nanopb.BUILD")),
+    )
 
-  native.bind(
-      name = "nanopb",
-      actual = "@nanopb_git//:nanopb",
-  )
+  if not native.existing_rule("nanopb"):
+    native.bind(
+        name = "nanopb",
+        actual = "@nanopb_git//:nanopb",
+    )
 
-  native.new_http_archive(
-      name = "zlib_archive",
-      urls = [
-          "http://mirror.bazel.build/zlib.net/zlib-1.2.8.tar.gz",
-          "http://zlib.net/fossils/zlib-1.2.8.tar.gz",
-      ],
-      sha256 = "36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d",
-      strip_prefix = "zlib-1.2.8",
-      build_file = str(Label("//third_party:zlib.BUILD")),
-  )
+  if not native.existing_rule("zlib_archive"):
+    native.new_http_archive(
+        name = "zlib_archive",
+        urls = [
+            "http://mirror.bazel.build/zlib.net/zlib-1.2.8.tar.gz",
+            "http://zlib.net/fossils/zlib-1.2.8.tar.gz",
+        ],
+        sha256 = "36658cb768a54c1d4dec43c3116c27ed893e88b02ecfcb44f2166f9c0b7f2a0d",
+        strip_prefix = "zlib-1.2.8",
+        build_file = str(Label("//third_party:zlib.BUILD")),
+    )
 
-  native.bind(
-      name = "zlib",
-      actual = "@zlib_archive//:zlib",
-  )
+  if not native.existing_rule("zlib"):
+    native.bind(
+        name = "zlib",
+        actual = "@zlib_archive//:zlib",
+    )
 
   native.new_http_archive(
       name = "fft2d",
