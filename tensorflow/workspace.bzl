@@ -471,14 +471,35 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
   )
 
   if not native.existing_rule("com_github_grpc_grpc"):
-    native.new_http_archive(
+    native.http_archive(
         name = "com_github_grpc_grpc",
         urls = [
-            "http://mirror.bazel.build/github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
-            "https://github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
+            "http://mirror.bazel.build/github.com/grpc/grpc/archive/5cb6a1f86129fc2833de9a27cfe174260934342b.tar.gz",
+            "https://github.com/grpc/grpc/archive/5cb6a1f86129fc2833de9a27cfe174260934342b.tar.gz",
         ],
-        strip_prefix = "grpc-8df769fd3a89fc6b59da7b775cb3293553ab0d22",
-        build_file = str(Label("//third_party:grpc.BUILD")),
+        strip_prefix = "grpc-5cb6a1f86129fc2833de9a27cfe174260934342b",
+    )
+    #native.new_http_archive(
+    #    name = "com_github_grpc_grpc",
+    #    urls = [
+    #        "http://mirror.bazel.build/github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
+    #        "https://github.com/grpc/grpc/archive/8df769fd3a89fc6b59da7b775cb3293553ab0d22.tar.gz",
+    #    ],
+    #    strip_prefix = "grpc-8df769fd3a89fc6b59da7b775cb3293553ab0d22",
+    #    build_file = str(Label("//third_party:grpc.BUILD")),
+    #)
+
+  if not native.existing_rule("com_github_lingochamp_cares"):
+    native.http_archive(
+        name = "com_github_lingochamp_cares",
+        url = "https://github.com/lingochamp/cares/archive/86e9f31ee4d5edfcf5463d890270e286df6ff756.tar.gz",
+        strip_prefix = "cares-86e9f31ee4d5edfcf5463d890270e286df6ff756",
+    )
+
+  if not native.existing_rule("cares")
+    native.binds(
+        name = "cares",
+        actual = "@com_github_lingochamp_cares//:ares",
     )
 
   if not native.existing_rule("grpc_cpp_plugin"):
@@ -558,23 +579,27 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         strip_prefix = "boringssl-bbcaa15b0647816b9a1a9b9e0d209cd6712f0105",
     )
 
-  if not native.existing_rule("nanopb_git"):
-    native.new_http_archive(
-        name = "nanopb_git",
-        urls = [
-            "http://mirror.bazel.build/github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
-            "https://github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
-        ],
-        sha256 = "ab1455c8edff855f4f55b68480991559e51c11e7dab060bbab7cffb12dd3af33",
-        strip_prefix = "nanopb-1251fa1065afc0d62f635e0f63fec8276e14e13c",
-        build_file = str(Label("//third_party:nanopb.BUILD")),
-    )
+  #if not native.existing_rule("nanopb_git"):
+  #  native.new_http_archive(
+  #      name = "nanopb_git",
+  #      urls = [
+  #          "http://mirror.bazel.build/github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
+  #          "https://github.com/nanopb/nanopb/archive/1251fa1065afc0d62f635e0f63fec8276e14e13c.tar.gz",
+  #      ],
+  #      sha256 = "ab1455c8edff855f4f55b68480991559e51c11e7dab060bbab7cffb12dd3af33",
+  #      strip_prefix = "nanopb-1251fa1065afc0d62f635e0f63fec8276e14e13c",
+  #      build_file = str(Label("//third_party:nanopb.BUILD")),
+  #  )
 
   if not native.existing_rule("nanopb"):
     native.bind(
         name = "nanopb",
-        actual = "@nanopb_git//:nanopb",
+        actual = "@com_github_grpc_grpc//nanopb:nanopb",
     )
+    #native.bind(
+    #    name = "nanopb",
+    #    actual = "@nanopb_git//:nanopb",
+    #)
 
   if not native.existing_rule("zlib_archive"):
     native.new_http_archive(
