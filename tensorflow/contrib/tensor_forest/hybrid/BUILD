@@ -96,7 +96,7 @@ cc_library(
     deps = [
         "//tensorflow/core:framework_headers_lib",
         "//third_party/eigen3",
-        "@com_github_google_protobuf//:protobuf_headers",
+        "@protobuf//:protobuf_headers",
     ],
 )
 

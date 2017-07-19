@@ -356,24 +356,18 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         patch_file = str(Label("//third_party/protobuf:add_noinlines.patch")),
     )
 
-  if not native.existing_rule("protobuf"):
-    native.bind(
-        name = "protobuf",
-        actual = "@com_github_google_protobuf//:protobuf",
-    )
-
   if not native.existing_rule("protobuf_clib"):
     # grpc expects //external:protobuf_clib and //external:protobuf_compiler
     # to point to the protobuf's compiler library.
     native.bind(
         name = "protobuf_clib",
-        actual = "@com_github_google_protobuf//:protoc_lib",
+        actual = "@protobuf//:protoc_lib",
     )
 
   if not native.existing_rule("protobuf_compiler"):
     native.bind(
         name = "protobuf_compiler",
-        actual = "@com_github_google_protobuf//:protoc_lib",
+        actual = "@protobuf//:protoc_lib",
     )
 
   if not native.existing_rule("com_google_protobuf"):
