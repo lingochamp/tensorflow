@@ -594,7 +594,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
   if not native.existing_rule("nanopb"):
     native.bind(
         name = "nanopb",
-        actual = "@com_github_grpc_grpc//nanopb:nanopb",
+        actual = "@com_github_grpc_grpc//third_party/nanopb:nanopb",
     )
     #native.bind(
     #    name = "nanopb",
