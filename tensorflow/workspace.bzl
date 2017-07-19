@@ -497,7 +497,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
     )
 
   if not native.existing_rule("cares"):
-    native.binds(
+    native.bind(
         name = "cares",
         actual = "@com_github_lingochamp_cares//:ares",
     )
