@@ -338,7 +338,8 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
     )
 
   if not native.existing_rule("com_github_google_protobuf"):
-    # Do not apply the patch as we do not use python run time.
+    # Do not apply the patch as we do not use python run time, due to
+    # https://github.com/tensorflow/tensorflow/issues/11599
     native.http_archive(
         name = "com_github_google_protobuf",
         urls = [
