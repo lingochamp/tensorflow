@@ -496,7 +496,7 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         strip_prefix = "cares-86e9f31ee4d5edfcf5463d890270e286df6ff756",
     )
 
-  if not native.existing_rule("cares")
+  if not native.existing_rule("cares"):
     native.binds(
         name = "cares",
         actual = "@com_github_lingochamp_cares//:ares",
