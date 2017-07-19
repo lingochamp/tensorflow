@@ -337,10 +337,10 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
         actual = "@six_archive//:six",
     )
 
-  if not native.existing_rule("protobuf"):
+  if not native.existing_rule("com_github_google_protobuf"):
     # Do not apply the patch as we do not use python run time.
     native.http_archive(
-        name = "protobuf",
+        name = "com_github_google_protobuf",
         urls = [
             "http://mirror.bazel.build/github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
             "https://github.com/google/protobuf/archive/2b7430d96aeff2bb624c8d52182ff5e4b9f7f18a.tar.gz",
@@ -359,13 +359,13 @@ def tf_workspace(path_prefix="", tf_repo_name=""):
     # to point to the protobuf's compiler library.
     native.bind(
         name = "protobuf_clib",
-        actual = "@protobuf//:protoc_lib",
+        actual = "@com_github_google_protobuf//:protoc_lib",
     )
 
   if not native.existing_rule("protobuf_compiler"):
     native.bind(
         name = "protobuf_compiler",
-        actual = "@protobuf//:protoc_lib",
+        actual = "@com_github_google_protobuf//:protoc_lib",
     )
 
   if not native.existing_rule("com_google_protobuf"):

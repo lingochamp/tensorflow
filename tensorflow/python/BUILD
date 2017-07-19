@@ -249,7 +249,7 @@ cc_binary(
     linkshared = 1,
     deps = [
         "//tensorflow/core:framework_headers_lib",
-        "@protobuf//:protobuf_headers",
+        "@com_github_google_protobuf//:protobuf_headers",
     ],
 )
 
@@ -2400,7 +2400,7 @@ py_library(
     srcs_version = "PY2AND3",
     deps = [
         "//third_party/py/numpy",
-        "@protobuf//:protobuf_python",
+        "@com_github_google_protobuf//:protobuf_python",
         "@six_archive//:six",
     ],
 )
