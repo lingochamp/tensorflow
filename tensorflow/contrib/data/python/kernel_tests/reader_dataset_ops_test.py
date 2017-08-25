@@ -40,27 +40,48 @@ class TextLineDatasetTest(test.TestCase):
   def _lineText(self, f, l):
     return compat.as_bytes("%d: %d" % (f, l))
 
-  def _createFiles(self, num_files, num_lines, crlf=False):
+  def _createFiles(self,
+                   num_files,
+                   num_lines,
+                   crlf=False,
+                   compression_type=None):
     filenames = []
     for i in range(num_files):
       fn = os.path.join(self.get_temp_dir(), "text_line.%d.txt" % i)
       filenames.append(fn)
-      with open(fn, "wb") as f:
-        for j in range(num_lines):
-          f.write(self._lineText(i, j))
-          # Always include a newline after the record unless it is
-          # at the end of the file, in which case we include it sometimes.
-          if j + 1 != num_lines or i == 0:
-            f.write(b"\r\n" if crlf else b"\n")
+      contents = []
+      for j in range(num_lines):
+        contents.append(self._lineText(i, j))
+        # Always include a newline after the record unless it is
+        # at the end of the file, in which case we include it sometimes.
+        if j + 1 != num_lines or i == 0:
+          contents.append(b"\r\n" if crlf else b"\n")
+      contents = b"".join(contents)
+
+      if not compression_type:
+        with open(fn, "wb") as f:
+          f.write(contents)
+      elif compression_type == "GZIP":
+        with gzip.GzipFile(fn, "wb") as f:
+          f.write(contents)
+      elif compression_type == "ZLIB":
+        contents = zlib.compress(contents)
+        with open(fn, "wb") as f:
+          f.write(contents)
+      else:
+        raise ValueError("Unsupported compression_type", compression_type)
+
     return filenames
 
-  def testTextLineDataset(self):
-    test_filenames = self._createFiles(2, 5, crlf=True)
+  def _testTextLineDataset(self, compression_type=None):
+    test_filenames = self._createFiles(
+        2, 5, crlf=True, compression_type=compression_type)
     filenames = array_ops.placeholder(dtypes.string, shape=[None])
     num_epochs = array_ops.placeholder(dtypes.int64, shape=[])
     batch_size = array_ops.placeholder(dtypes.int64, shape=[])
 
-    repeat_dataset = dataset_ops.TextLineDataset(filenames).repeat(num_epochs)
+    repeat_dataset = dataset_ops.TextLineDataset(
+        filenames, compression_type=compression_type).repeat(num_epochs)
     batch_dataset = repeat_dataset.batch(batch_size)
 
     iterator = dataset_ops.Iterator.from_structure(batch_dataset.output_types)
@@ -70,24 +91,25 @@ class TextLineDatasetTest(test.TestCase):
 
     with self.test_session() as sess:
       # Basic test: read from file 0.
-      sess.run(init_op, feed_dict={filenames: [test_filenames[0]],
-                                   num_epochs: 1})
+      sess.run(
+          init_op, feed_dict={filenames: [test_filenames[0]],
+                              num_epochs: 1})
       for i in range(5):
         self.assertEqual(self._lineText(0, i), sess.run(get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(get_next)
 
       # Basic test: read from file 1.
-      sess.run(init_op, feed_dict={filenames: [test_filenames[1]],
-                                   num_epochs: 1})
+      sess.run(
+          init_op, feed_dict={filenames: [test_filenames[1]],
+                              num_epochs: 1})
       for i in range(5):
         self.assertEqual(self._lineText(1, i), sess.run(get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(get_next)
 
       # Basic test: read from both files.
-      sess.run(init_op, feed_dict={filenames: test_filenames,
-                                   num_epochs: 1})
+      sess.run(init_op, feed_dict={filenames: test_filenames, num_epochs: 1})
       for j in range(2):
         for i in range(5):
           self.assertEqual(self._lineText(j, i), sess.run(get_next))
@@ -95,8 +117,7 @@ class TextLineDatasetTest(test.TestCase):
         sess.run(get_next)
 
       # Test repeated iteration through both files.
-      sess.run(init_op, feed_dict={filenames: test_filenames,
-                                   num_epochs: 10})
+      sess.run(init_op, feed_dict={filenames: test_filenames, num_epochs: 10})
       for _ in range(10):
         for j in range(2):
           for i in range(5):
@@ -105,14 +126,38 @@ class TextLineDatasetTest(test.TestCase):
         sess.run(get_next)
 
       # Test batched and repeated iteration through both files.
-      sess.run(init_batch_op, feed_dict={filenames: test_filenames,
-                                         num_epochs: 10,
-                                         batch_size: 5})
+      sess.run(
+          init_batch_op,
+          feed_dict={filenames: test_filenames,
+                     num_epochs: 10,
+                     batch_size: 5})
       for _ in range(10):
         self.assertAllEqual([self._lineText(0, i) for i in range(5)],
                             sess.run(get_next))
         self.assertAllEqual([self._lineText(1, i) for i in range(5)],
                             sess.run(get_next))
+
+  def testTextLineDatasetNoCompression(self):
+    self._testTextLineDataset()
+
+  def testTextLineDatasetGzipCompression(self):
+    self._testTextLineDataset(compression_type="GZIP")
+
+  def testTextLineDatasetZlibCompression(self):
+    self._testTextLineDataset(compression_type="ZLIB")
+
+  def testTextLineDatasetBuffering(self):
+    test_filenames = self._createFiles(2, 5, crlf=True)
+
+    repeat_dataset = dataset_ops.TextLineDataset(test_filenames, buffer_size=10)
+    iterator = repeat_dataset.make_one_shot_iterator()
+
+    with self.test_session() as sess:
+      for j in range(2):
+        for i in range(5):
+          self.assertEqual(self._lineText(j, i), sess.run(iterator.get_next()))
+      with self.assertRaises(errors.OutOfRangeError):
+        sess.run(iterator.get_next())
 
 
 class FixedLengthRecordReaderTest(test.TestCase):
@@ -158,24 +203,25 @@ class FixedLengthRecordReaderTest(test.TestCase):
 
     with self.test_session() as sess:
       # Basic test: read from file 0.
-      sess.run(init_op, feed_dict={filenames: [test_filenames[0]],
-                                   num_epochs: 1})
+      sess.run(
+          init_op, feed_dict={filenames: [test_filenames[0]],
+                              num_epochs: 1})
       for i in range(self._num_records):
         self.assertEqual(self._record(0, i), sess.run(get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(get_next)
 
       # Basic test: read from file 1.
-      sess.run(init_op, feed_dict={filenames: [test_filenames[1]],
-                                   num_epochs: 1})
+      sess.run(
+          init_op, feed_dict={filenames: [test_filenames[1]],
+                              num_epochs: 1})
       for i in range(self._num_records):
         self.assertEqual(self._record(1, i), sess.run(get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(get_next)
 
       # Basic test: read from both files.
-      sess.run(init_op, feed_dict={filenames: test_filenames,
-                                   num_epochs: 1})
+      sess.run(init_op, feed_dict={filenames: test_filenames, num_epochs: 1})
       for j in range(self._num_files):
         for i in range(self._num_records):
           self.assertEqual(self._record(j, i), sess.run(get_next))
@@ -183,8 +229,7 @@ class FixedLengthRecordReaderTest(test.TestCase):
         sess.run(get_next)
 
       # Test repeated iteration through both files.
-      sess.run(init_op, feed_dict={filenames: test_filenames,
-                                   num_epochs: 10})
+      sess.run(init_op, feed_dict={filenames: test_filenames, num_epochs: 10})
       for _ in range(10):
         for j in range(self._num_files):
           for i in range(self._num_records):
@@ -193,14 +238,38 @@ class FixedLengthRecordReaderTest(test.TestCase):
         sess.run(get_next)
 
       # Test batched and repeated iteration through both files.
-      sess.run(init_batch_op, feed_dict={filenames: test_filenames,
-                                         num_epochs: 10,
-                                         batch_size: self._num_records})
+      sess.run(
+          init_batch_op,
+          feed_dict={
+              filenames: test_filenames,
+              num_epochs: 10,
+              batch_size: self._num_records
+          })
       for _ in range(10):
         for j in range(self._num_files):
-          self.assertAllEqual([self._record(j, i)
-                               for i in range(self._num_records)],
-                              sess.run(get_next))
+          self.assertAllEqual(
+              [self._record(j, i) for i in range(self._num_records)],
+              sess.run(get_next))
+      with self.assertRaises(errors.OutOfRangeError):
+        sess.run(get_next)
+
+  def testFixedLengthRecordDatasetBuffering(self):
+    test_filenames = self._createFiles()
+
+    dataset = dataset_ops.FixedLengthRecordDataset(
+        test_filenames,
+        self._record_bytes,
+        self._header_bytes,
+        self._footer_bytes,
+        buffer_size=10)
+    iterator = dataset.make_one_shot_iterator()
+
+    with self.test_session() as sess:
+      for j in range(self._num_files):
+        for i in range(self._num_records):
+          self.assertEqual(self._record(j, i), sess.run(iterator.get_next()))
+      with self.assertRaises(errors.OutOfRangeError):
+        sess.run(iterator.get_next())
 
 
 class TFRecordDatasetTest(test.TestCase):
@@ -244,27 +313,34 @@ class TFRecordDatasetTest(test.TestCase):
   def testReadOneEpoch(self):
     with self.test_session() as sess:
       # Basic test: read from file 0.
-      sess.run(self.init_op,
-               feed_dict={self.filenames: [self.test_filenames[0]],
-                          self.num_epochs: 1})
+      sess.run(
+          self.init_op,
+          feed_dict={
+              self.filenames: [self.test_filenames[0]],
+              self.num_epochs: 1
+          })
       for i in range(self._num_records):
         self.assertAllEqual(self._record(0, i), sess.run(self.get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(self.get_next)
 
       # Basic test: read from file 1.
-      sess.run(self.init_op,
-               feed_dict={self.filenames: [self.test_filenames[1]],
-                          self.num_epochs: 1})
+      sess.run(
+          self.init_op,
+          feed_dict={
+              self.filenames: [self.test_filenames[1]],
+              self.num_epochs: 1
+          })
       for i in range(self._num_records):
         self.assertAllEqual(self._record(1, i), sess.run(self.get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(self.get_next)
 
       # Basic test: read from both files.
-      sess.run(self.init_op,
-               feed_dict={self.filenames: self.test_filenames,
-                          self.num_epochs: 1})
+      sess.run(
+          self.init_op,
+          feed_dict={self.filenames: self.test_filenames,
+                     self.num_epochs: 1})
       for j in range(self._num_files):
         for i in range(self._num_records):
           self.assertAllEqual(self._record(j, i), sess.run(self.get_next))
@@ -273,8 +349,10 @@ class TFRecordDatasetTest(test.TestCase):
 
   def testReadTenEpochs(self):
     with self.test_session() as sess:
-      sess.run(self.init_op, feed_dict={self.filenames: self.test_filenames,
-                                        self.num_epochs: 10})
+      sess.run(
+          self.init_op,
+          feed_dict={self.filenames: self.test_filenames,
+                     self.num_epochs: 10})
       for _ in range(10):
         for j in range(self._num_files):
           for i in range(self._num_records):
@@ -284,15 +362,18 @@ class TFRecordDatasetTest(test.TestCase):
 
   def testReadTenEpochsOfBatches(self):
     with self.test_session() as sess:
-      sess.run(self.init_batch_op,
-               feed_dict={self.filenames: self.test_filenames,
-                          self.num_epochs: 10,
-                          self.batch_size: self._num_records})
+      sess.run(
+          self.init_batch_op,
+          feed_dict={
+              self.filenames: self.test_filenames,
+              self.num_epochs: 10,
+              self.batch_size: self._num_records
+          })
       for _ in range(10):
         for j in range(self._num_files):
           values = sess.run(self.get_next)
-          self.assertAllEqual([self._record(j, i)
-                               for i in range(self._num_records)], values)
+          self.assertAllEqual(
+              [self._record(j, i) for i in range(self._num_records)], values)
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(self.get_next)
 
@@ -308,9 +389,10 @@ class TFRecordDatasetTest(test.TestCase):
         zlib_files.append(zfn)
 
     with self.test_session() as sess:
-      sess.run(self.init_op,
-               feed_dict={self.filenames: zlib_files,
-                          self.compression_type: "ZLIB"})
+      sess.run(
+          self.init_op,
+          feed_dict={self.filenames: zlib_files,
+                     self.compression_type: "ZLIB"})
       for j in range(self._num_files):
         for i in range(self._num_records):
           self.assertAllEqual(self._record(j, i), sess.run(self.get_next))
@@ -327,14 +409,27 @@ class TFRecordDatasetTest(test.TestCase):
         gzip_files.append(gzfn)
 
     with self.test_session() as sess:
-      sess.run(self.init_op,
-               feed_dict={self.filenames: gzip_files,
-                          self.compression_type: "GZIP"})
+      sess.run(
+          self.init_op,
+          feed_dict={self.filenames: gzip_files,
+                     self.compression_type: "GZIP"})
       for j in range(self._num_files):
         for i in range(self._num_records):
           self.assertAllEqual(self._record(j, i), sess.run(self.get_next))
       with self.assertRaises(errors.OutOfRangeError):
         sess.run(self.get_next)
+
+  def testReadWithBuffer(self):
+    one_mebibyte = 2**20
+    d = dataset_ops.TFRecordDataset(
+        self.test_filenames, buffer_size=one_mebibyte)
+    iterator = d.make_one_shot_iterator()
+    with self.test_session() as sess:
+      for j in range(self._num_files):
+        for i in range(self._num_records):
+          self.assertAllEqual(self._record(j, i), sess.run(iterator.get_next()))
+      with self.assertRaises(errors.OutOfRangeError):
+        sess.run(iterator.get_next())
 
 
 class ReadBatchFeaturesTest(test.TestCase):
@@ -495,6 +590,30 @@ class ReadBatchFeaturesTest(test.TestCase):
             self._verify_records(sess, batch_size, num_epochs=num_epochs)
             with self.assertRaises(errors.OutOfRangeError):
               self._next_actual_batch(sess)
+
+  def testReadWithEquivalentDataset(self):
+    # TODO(mrry): Add support for tf.SparseTensor as a Dataset component.
+    features = {
+        "file": parsing_ops.FixedLenFeature([], dtypes.int64),
+        "record": parsing_ops.FixedLenFeature([], dtypes.int64),
+    }
+    dataset = (dataset_ops.TFRecordDataset(self.test_filenames)
+               .map(lambda x: parsing_ops.parse_single_example(x, features))
+               .repeat(10).batch(2))
+    iterator = dataset.make_initializable_iterator()
+    init_op = iterator.initializer
+    next_element = iterator.get_next()
+
+    with self.test_session() as sess:
+      sess.run(init_op)
+      for file_batch, _, _, _, record_batch in self._next_expected_batch(
+          range(self._num_files), 2, 10):
+        actual_batch = sess.run(next_element)
+        self.assertAllEqual(file_batch, actual_batch["file"])
+        self.assertAllEqual(record_batch, actual_batch["record"])
+      with self.assertRaises(errors.OutOfRangeError):
+        sess.run(next_element)
+
 
 if __name__ == "__main__":
   test.main()

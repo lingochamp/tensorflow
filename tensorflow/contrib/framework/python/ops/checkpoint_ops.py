@@ -19,17 +19,12 @@ from __future__ import print_function
 
 import math
 
-from tensorflow.contrib.framework.python.ops import gen_checkpoint_ops
-from tensorflow.contrib.util import loader
 from tensorflow.python.framework import dtypes
 from tensorflow.python.framework import ops
 from tensorflow.python.ops import array_ops
+from tensorflow.python.ops import gen_checkpoint_ops
 from tensorflow.python.ops import init_ops
 from tensorflow.python.ops import math_ops
-from tensorflow.python.platform import resource_loader
-
-_checkpoint_ops_so = loader.load_op_library(
-    resource_loader.get_path_to_datafile("_checkpoint_ops.so"))
 
 ops.NotDifferentiable("GenerateVocabRemapping")
 ops.NotDifferentiable("LoadAndRemapMatrix")
@@ -46,7 +41,8 @@ def _load_and_remap_matrix(ckpt_path,
                            old_col_vocab_file=None,
                            new_col_vocab_file=None,
                            num_row_oov_buckets=0,
-                           num_col_oov_buckets=0):
+                           num_col_oov_buckets=0,
+                           max_rows_in_memory=-1):
   """Loads a 2-D (matrix) `Tensor` from checkpoint.
 
   Generates 1D-remappings for rows and columns using the
@@ -99,6 +95,10 @@ def _load_and_remap_matrix(ckpt_path,
       to append. Must be >= 0.
     num_col_oov_buckets: `int` specifying the number of out-of-vocabulary
       columns to append. Must be >= 0.
+    max_rows_in_memory: `int` specifying the maximum number of rows to load from
+      the checkpoint at once. If less than or equal to 0, the entire matrix will
+      be loaded into memory. Setting this arg trades increased disk reads for
+      lower memory usage.
 
   Returns:
     A Tensor of shape `[num_rows_to_load + num_row_oov_buckets,
@@ -142,7 +142,7 @@ def _load_and_remap_matrix(ckpt_path,
   num_rows_present = num_rows_to_load
   if remap_rows:
     row_remapping, num_rows_present = (
-        gen_checkpoint_ops.generate_vocab_remapping(
+        gen_checkpoint_ops._generate_vocab_remapping(  # pylint: disable=protected-access
             new_vocab_file=new_row_vocab_file,
             old_vocab_file=old_row_vocab_file,
             new_vocab_offset=new_row_vocab_offset,
@@ -160,7 +160,7 @@ def _load_and_remap_matrix(ckpt_path,
   num_cols_present = new_col_vocab_size
   if remap_cols:
     col_remapping, num_cols_present = (
-        gen_checkpoint_ops.generate_vocab_remapping(
+        gen_checkpoint_ops._generate_vocab_remapping(  # pylint: disable=protected-access
             new_vocab_file=new_col_vocab_file,
             old_vocab_file=old_col_vocab_file,
             new_vocab_offset=0,  # Offset is unused for cols (no partitioning).
@@ -170,14 +170,15 @@ def _load_and_remap_matrix(ckpt_path,
       num_rows_to_load * new_col_vocab_size -
       num_rows_present * num_cols_present, 1
   ])
-  return_tensor = gen_checkpoint_ops.load_and_remap_matrix(
+  return_tensor = gen_checkpoint_ops._load_and_remap_matrix(  # pylint: disable=protected-access
       ckpt_path=ckpt_path,
       old_tensor_name=old_tensor_name,
       row_remapping=row_remapping,
       col_remapping=col_remapping,
       initializing_values=init_vals,
       num_rows=num_rows_to_load,
-      num_cols=new_col_vocab_size)
+      num_cols=new_col_vocab_size,
+      max_rows_in_memory=max_rows_in_memory)
 
   # Add OOV row(s) and column(s).
   if num_row_oov_buckets > 0:
@@ -204,7 +205,8 @@ def load_and_remap_matrix_initializer(ckpt_path,
                                       new_col_vocab_file=None,
                                       num_row_oov_buckets=0,
                                       num_col_oov_buckets=0,
-                                      initializer=None):
+                                      initializer=None,
+                                      max_rows_in_memory=-1):
   r"""Returns a var initializer for loading and remapping a 2-D (matrix) tensor.
 
   The returned initializer loads a 2-D (matrix) `Tensor` with name
@@ -297,6 +299,10 @@ def load_and_remap_matrix_initializer(ckpt_path,
     initializer: Initializer function to initialize missing values. Accepts a
       1-D tensor as the arg to specify the shape of the returned tensor. If
       `None`, defaults to using `zeros_initializer()`.
+    max_rows_in_memory: `int` specifying the maximum number of rows to load from
+      the checkpoint at once. If less than or equal to 0, the entire matrix will
+      be loaded into memory. Setting this arg trades increased disk reads for
+      lower memory usage.
 
   Returns:
     A variable initializer function that should be used to initialize a
@@ -378,7 +384,8 @@ def load_and_remap_matrix_initializer(ckpt_path,
         old_col_vocab_file=old_col_vocab_file,
         new_col_vocab_file=new_col_vocab_file,
         num_row_oov_buckets=row_oov_buckets_to_use,
-        num_col_oov_buckets=num_col_oov_buckets)
+        num_col_oov_buckets=num_col_oov_buckets,
+        max_rows_in_memory=max_rows_in_memory)
 
   return _initializer
 
@@ -390,7 +397,8 @@ def load_embedding_initializer(ckpt_path,
                                old_vocab_file,
                                new_vocab_file,
                                num_oov_buckets=0,
-                               initializer=None):
+                               initializer=None,
+                               max_rows_in_memory=-1):
   """Returns a variable initializer for loading pre-trained embeddings.
 
   Wrapper around `load_and_remap_matrix_initializer()` specialized for loading
@@ -416,6 +424,10 @@ def load_embedding_initializer(ckpt_path,
     initializer: Initializer function that accepts a 1-D tensor as the arg to
       specify the shape of the returned tensor. If `None`, defaults to using
       `truncated_normal_initializer()`.
+    max_rows_in_memory: `int` specifying the maximum number of rows to load from
+      the checkpoint at once. If less than or equal to 0, the entire matrix will
+      be loaded into memory. Setting this arg trades increased disk reads for
+      lower memory usage.
 
   Returns:
     A variable initializer function.
@@ -437,7 +449,8 @@ def load_embedding_initializer(ckpt_path,
       new_col_vocab_file=None,
       num_row_oov_buckets=num_oov_buckets,
       num_col_oov_buckets=0,
-      initializer=initializer)
+      initializer=initializer,
+      max_rows_in_memory=max_rows_in_memory)
 
 
 def load_linear_multiclass_bias_initializer(ckpt_path,
@@ -446,7 +459,8 @@ def load_linear_multiclass_bias_initializer(ckpt_path,
                                             old_class_vocab_file,
                                             new_class_vocab_file,
                                             num_class_oov_buckets=0,
-                                            initializer=None):
+                                            initializer=None,
+                                            max_rows_in_memory=-1):
   """Loads pre-trained multi-class biases for linear models from checkpoint.
 
   Wrapper around `load_and_remap_matrix_initializer()` specialized for loading
@@ -469,6 +483,10 @@ def load_linear_multiclass_bias_initializer(ckpt_path,
     initializer: Initializer function that accepts a 1-D tensor as the arg to
       specify the shape of the returned tensor. If `None`, defaults to using
       `zeros_initializer()`.
+    max_rows_in_memory: `int` specifying the maximum number of rows to load from
+      the checkpoint at once. If less than or equal to 0, the entire matrix will
+      be loaded into memory. Setting this arg trades increased disk reads for
+      lower memory usage.
 
   Returns:
     A variable initializer function.
@@ -488,7 +506,8 @@ def load_linear_multiclass_bias_initializer(ckpt_path,
       new_col_vocab_file=None,
       num_row_oov_buckets=num_class_oov_buckets,
       num_col_oov_buckets=0,
-      initializer=initializer)
+      initializer=initializer,
+      max_rows_in_memory=max_rows_in_memory)
 
 
 def load_variable_slot_initializer(ckpt_path,
@@ -502,7 +521,8 @@ def load_variable_slot_initializer(ckpt_path,
                                    new_col_vocab_file=None,
                                    num_row_oov_buckets=0,
                                    num_col_oov_buckets=0,
-                                   initializer=None):
+                                   initializer=None,
+                                   max_rows_in_memory=-1):
   """Loads pre-trained multi-class slots for linear models from checkpoint.
 
   Wrapper around `load_and_remap_matrix_initializer()` specialized for loading
@@ -549,6 +569,10 @@ def load_variable_slot_initializer(ckpt_path,
     initializer: Initializer function to initialize missing values. Accepts a
       1-D tensor as the arg to specify the shape of the returned tensor. If
       `None`, defaults to using `zeros_initializer()`.
+    max_rows_in_memory: `int` specifying the maximum number of rows to load from
+      the checkpoint at once. If less than or equal to 0, the entire matrix will
+      be loaded into memory. Setting this arg trades increased disk reads for
+      lower memory usage.
 
   Returns:
     A variable initializer function that should be used to initialize a
@@ -570,7 +594,8 @@ def load_variable_slot_initializer(ckpt_path,
       new_col_vocab_file=new_col_vocab_file,
       num_row_oov_buckets=num_row_oov_buckets,
       num_col_oov_buckets=num_col_oov_buckets,
-      initializer=initializer)
+      initializer=initializer,
+      max_rows_in_memory=max_rows_in_memory)
 
   def _initializer(shape, dtype=dtypes.float32, partition_info=None):
     del partition_info  # Unused by this override.

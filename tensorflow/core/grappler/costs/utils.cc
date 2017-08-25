@@ -29,6 +29,7 @@ limitations under the License.
 #include "tensorflow/core/framework/attr_value.pb.h"
 #include "tensorflow/core/framework/op.h"
 #include "tensorflow/core/framework/op_def.pb.h"
+#include "tensorflow/core/framework/tensor.pb.h"
 #include "tensorflow/core/framework/tensor_shape.pb.h"
 #include "tensorflow/core/framework/types.pb.h"
 #include "tensorflow/core/graph/graph.h"
@@ -69,11 +70,12 @@ static std::vector<TensorProto> ExtractTensors(const AttrValue& attr_value) {
   return tensors;
 }
 
+// Annotate the op_info inputs with extra information when possible (e.g. the
+// input value if it's known statically).
 static void ExtractExtraProperties(
     const NodeDef& node,
     const std::unordered_map<string, const NodeDef*>& name_to_node,
-    std::vector<OpInfo::TensorProperties>* extra_inputs,
-    protobuf::Map<string, AttrValue>* attr_map) {
+    OpInfo* op_info) {
   OpRegistry* op_registry = OpRegistry::Global();
   const OpDef* op_def = nullptr;
   auto s = op_registry->LookUpOpDef(node.op(), &op_def);
@@ -101,11 +103,8 @@ static void ExtractExtraProperties(
       if (tensors.empty()) continue;
 
       const TensorProto& t = tensors[0];
-      OpInfo::TensorProperties input;
-      input.set_dtype(t.dtype());
-      *(input.mutable_shape()) = t.tensor_shape();
-      *(input.mutable_value()) = t;
-      extra_inputs->push_back(input);
+      OpInfo::TensorProperties* input = op_info->mutable_inputs(i);
+      *(input->mutable_value()) = t;
 
       // For filename input, the file size can also be useful.
       if (op_def && i < op_def->input_arg_size() &&
@@ -128,7 +127,7 @@ static void ExtractExtraProperties(
         AttrValue attr;
         attr.set_i(stat.length);
         string attr_key = strings::StrCat("input_", i, "_filesize");
-        (*attr_map)[attr_key] = attr;
+        (*op_info->mutable_attr())[attr_key] = attr;
       }
     }
 
@@ -139,7 +138,7 @@ static void ExtractExtraProperties(
       string new_key = strings::StrCat("parent_", i, "_op");
       AttrValue attr;
       attr.set_s(input_node->op());
-      (*attr_map)[new_key] = attr;
+      (*op_info->mutable_attr())[new_key] = attr;
       // TODO(yuefengz): Only parent node's op name is copied. Copy inputs
       // and attributes when necessary.
     }
@@ -201,25 +200,17 @@ DeviceProperties GetDeviceInfo(const CostGraphDef::Node& node) {
   return GetDeviceInfo(node.device());
 }
 
-OpInfo BuildOpInfo(
-    const NodeDef& node, const string& device_str,
+OpInfo BuildOpInfoWithoutDevice(
+    const NodeDef& node,
     const std::unordered_map<string, const NodeDef*>& name_to_node,
     const std::vector<OpInfo::TensorProperties>& inputs) {
   OpInfo op_info;
   op_info.set_op(node.op());
   *op_info.mutable_attr() = node.attr();
-  *op_info.mutable_device() = GetDeviceInfo(device_str);
   for (auto& input : inputs) {
     *op_info.add_inputs() = input;
   }
-
-  std::vector<OpInfo::TensorProperties> extra_inputs;
-  ExtractExtraProperties(node, name_to_node, &extra_inputs,
-                         op_info.mutable_attr());
-  for (auto& input : extra_inputs) {
-    *op_info.add_inputs() = input;
-  }
-
+  ExtractExtraProperties(node, name_to_node, &op_info);
   return op_info;
 }
 
@@ -263,8 +254,8 @@ OpPerformanceList CostGraphToOpPerformanceData(const CostGraphDef& cost_graph,
 
     std::vector<OpInfo::TensorProperties> inputs =
         FindInputFeatures(node, name_to_cost, name_to_node);
-    (*perf->mutable_op()) =
-        BuildOpInfo(node, cost_node->device(), name_to_node, inputs);
+    *perf->mutable_op() = BuildOpInfoWithoutDevice(node, name_to_node, inputs);
+    *perf->mutable_op()->mutable_device() = GetDeviceInfo(cost_node->device());
 
     perf->set_temporary_memory_size(cost_node->temporary_memory_size());
     // Note that CostGraphDef::Node::compute_cost is microseconds, while
