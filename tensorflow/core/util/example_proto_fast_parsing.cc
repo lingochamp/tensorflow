@@ -89,7 +89,7 @@ class Feature {
       default:
         // Initialize variable to avoid compiler warning
         *dtype = DT_INVALID;
-        return errors::InvalidArgument("Unsuported datatype.");
+        return errors::InvalidArgument("Unsupported datatype.");
     }
     return Status::OK();
   }
@@ -657,7 +657,8 @@ Status FastParseSerializedExample(
           example_dtype != config.sparse[d].dtype) {
         return example_error(strings::StrCat(
             "Data types don't match. ",
-            "Expected type: ", DataTypeString(config.sparse[d].dtype)));
+            "Expected type: ", DataTypeString(config.sparse[d].dtype),
+            ", Actual type: ", DataTypeString(example_dtype)));
       }
 
       switch (config.sparse[d].dtype) {

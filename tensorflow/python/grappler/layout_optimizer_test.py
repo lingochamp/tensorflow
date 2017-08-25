@@ -80,7 +80,6 @@ class LayoutOptimizerTest(test.TestCase):
           optimize_tensor_layout=True)
       graph_options = config_pb2.GraphOptions(
           rewrite_options=rewrite_options,
-          infer_shapes=True,
           build_cost_model=1)
       config = config_pb2.ConfigProto(graph_options=graph_options)
 
@@ -99,7 +98,8 @@ class LayoutOptimizerTest(test.TestCase):
       # LayoutOptimizer; two of them are cancelled out in the Collapse phase.
       expected_num_transposes = 2
       self.assertEqual(expected_num_transposes, num_transposes)
-      self.assertIn('LayoutOptimizerTransposeNHWCToNCHW-Conv2D-Reshape', nodes)
+      self.assertIn('LayoutOptimizerTransposeNHWCToNCHW-Conv2D-Reshape-0',
+                    nodes)
       self.assertIn('LayoutOptimizerTransposeNCHWToNHWC-Relu_1-MaxPool_1',
                     nodes)
 
